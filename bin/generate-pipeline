@@ -1,0 +1,83 @@
+#!/usr/bin/env ruby
+
+require 'yaml'
+require 'uri'
+
+endpoint, username, password = *ARGV
+
+fail 'usage: ./bin/generate-pipeline <endpoint> <username> <password>' if [endpoint, username, password].any?(&:nil?)
+
+class Repo
+  attr_reader :uri
+
+  def initialize(uri:)
+    @uri = uri
+  end
+
+  def name
+    @name ||= URI.parse(@uri).path.sub('/', '').gsub(/\W/,'-').downcase
+  end
+end
+
+source_repo = Repo.new(uri: 'https://github.com/jtarchie/concourse-saas')
+
+repos = [
+  Repo.new(uri: 'https://github.com/LinuxBozo/brij-spec')
+]
+
+manifest = {}
+manifest['resources'] = repos.collect do |repo|
+  {
+    'name' => repo.name,
+    'type' => 'git',
+    'source' => {
+      'uri' => repo.uri,
+      'branch' => 'master',
+      'paths' => ['.concourse.yml']
+    }
+  }
+end
+manifest['resources'] << {
+  'name' => source_repo.name,
+  'type' => 'git',
+  'source' => {
+    'uri' => source_repo.uri,
+    'branch' => 'master',
+  }
+}
+
+manifest['jobs'] = repos.collect do |repo|
+  {
+    'name' => repo.name,
+    'plan' => [
+      {
+        'aggregate' => [
+          {
+            'get' => 'repo',
+            'resource' => repo.name,
+            'trigger' => true
+          },
+          {
+            'get' => 'concourse-saas',
+            'resource' => source_repo.name,
+            'trigger' => true
+          }
+        ]
+      },
+      {
+        'task' => 'setup pipeline',
+        'file' => 'concourse-saas/tasks/setup-pipeline.yml',
+        'config' => {
+          'params' => {
+            'ENDPOINT' => endpoint,
+            'USERNAME' => username,
+            'PASSWORD' => password,
+            'PIPELINE' => repo.name
+          }
+        }
+      }
+    ]
+  }
+end
+
+puts manifest.to_yaml
