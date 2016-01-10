@@ -4,8 +4,9 @@ image: /var/vcap/packages/git_resource
 
 params:
   ENDPOINT:
-  USERNAME:
   PASSWORD:
+  PIPELINE:
+  USERNAME:
 
 inputs:
   - name: repo
@@ -20,4 +21,5 @@ run:
       curl "$ENDPOINT/api/v1/cli?arch=amd64&platform=linux" -o ./fly
       chmod +x ./fly
       { echo "$USERNAME"; echo "$PASSWORD"; } | ./fly -t endpoint login -c $ENDPOINT -k
-      ./fly -t endpoint set-pipeline -n -p $PIPELINE -c repo/.concourse.yml
+      ./fly -t endpoint set-pipeline     -n -p $PIPELINE -c repo/.concourse.yml
+      ./fly -t endpoint unpause-pipeline -n -p $PIPELINE -c repo/.concourse.yml
