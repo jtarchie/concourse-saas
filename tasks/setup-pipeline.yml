@@ -22,4 +22,4 @@ run:
       chmod +x ./fly
       { echo "$USERNAME"; echo "$PASSWORD"; } | ./fly -t endpoint login -c $ENDPOINT -k
       ./fly -t endpoint set-pipeline     -n -p $PIPELINE -c repo/.concourse.yml
-      ./fly -t endpoint unpause-pipeline -p $PIPELINE -c repo/.concourse.yml
+      ./fly -t endpoint unpause-pipeline -p $PIPELINE 
