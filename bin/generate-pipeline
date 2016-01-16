@@ -23,6 +23,7 @@ source_repo = Repo.new(uri: 'https://github.com/jtarchie/concourse-saas')
 
 repos = [
   Repo.new(uri: 'https://github.com/LinuxBozo/brij-spec'),
+  Repo.new(uri: 'https://github.com/flavorjones/mini_portile'),
   Repo.new(uri: 'https://github.com/jtarchie/pullrequest-resource')
 ]
 
