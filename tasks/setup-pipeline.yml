@@ -20,6 +20,6 @@ run:
       set -ex
       curl "$ENDPOINT/api/v1/cli?arch=amd64&platform=linux" -o ./fly
       chmod +x ./fly
-      { echo "$USERNAME"; echo "$PASSWORD"; } | ./fly -t endpoint login -c $ENDPOINT -k
+      ./fly -t endpoint login -c $ENDPOINT -k -u $USERNAME -p $PASSWORD
       ./fly -t endpoint set-pipeline     -n -p $PIPELINE -c repo/.concourse.yml
-      ./fly -t endpoint unpause-pipeline -p $PIPELINE 
+      ./fly -t endpoint unpause-pipeline -p $PIPELINE
