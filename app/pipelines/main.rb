@@ -18,7 +18,7 @@ module Pipeline
     private
 
     def jobs
-      (repos + [ source ]).collect do |repo|
+      (repos + [source]).collect do |repo|
         {
           'name' => repo.pipeline_name,
           'plan' => [

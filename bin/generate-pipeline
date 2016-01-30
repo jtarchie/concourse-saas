@@ -21,7 +21,7 @@ atc_endpoint = Models::ATCEndpoint.new(
 )
 
 manifest = Pipeline::Main.new(
-  repos: Repositories::Repos.all.collect {|r| Presenters::Repo.new(r) },
+  repos: Repositories::Repos.all.collect { |r| Presenters::Repo.new(r) },
   source: Presenters::Repo.new(source),
   atc_endpoint: atc_endpoint
 )
