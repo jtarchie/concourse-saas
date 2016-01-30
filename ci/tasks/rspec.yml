@@ -1,0 +1,17 @@
+---
+platform: linux
+image: docker:///ruby#2.3.0
+inputs:
+  - name: concourse-saas
+
+run:
+  path: sh
+  args:
+    - -c
+    - |
+      ls -asl concourse-saas/
+      cd concourse-saas
+      bundle install
+      bundle exec rspec
+
+
