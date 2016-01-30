@@ -1,5 +1,5 @@
 resources:
-  - name: concourse-sass
+  - name: concourse-saas
     type: git
     source:
       uri: https://github.com/jtarchie/concourse-sass
@@ -8,6 +8,6 @@ resources:
 jobs:
   - name: tests
     plan:
-      - get: concourse-sass
+      - get: concourse-saas
       - task: rspec
-        file: concourse-sass/ci/tasks/rspec.yml
+        file: concourse-saas/ci/tasks/rspec.yml
