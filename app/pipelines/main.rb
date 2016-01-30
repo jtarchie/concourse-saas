@@ -20,18 +20,18 @@ module Pipeline
     def jobs
       repos.collect do |repo|
         {
-          'name' => repo.name,
+          'name' => repo.pipeline_name,
           'plan' => [
             {
               'aggregate' => [
                 {
                   'get' => 'repo',
-                  'resource' => repo.name,
+                  'resource' => repo.pipeline_name,
                   'trigger' => true
                 },
                 {
                   'get' => 'concourse-saas',
-                  'resource' => source.name,
+                  'resource' => source.pipeline_name,
                   'trigger' => true
                 }
               ]
@@ -44,7 +44,7 @@ module Pipeline
                   'ENDPOINT' => atc_endpoint.uri,
                   'USERNAME' => atc_endpoint.username,
                   'PASSWORD' => atc_endpoint.password,
-                  'PIPELINE' => repo.name
+                  'PIPELINE' => repo.pipeline_name
                 }
               }
             }
@@ -56,7 +56,7 @@ module Pipeline
     def resources
       repos.collect do |repo|
         {
-          'name' => repo.name,
+          'name' => repo.pipeline_name,
           'type' => 'git',
           'source' => {
             'uri' => repo.uri,
@@ -65,7 +65,7 @@ module Pipeline
           }
         }
       end + [{
-        'name' => source.name,
+        'name' => source.pipeline_name,
         'type' => 'git',
         'source' => {
           'uri' => source.uri,

@@ -7,9 +7,5 @@ module Models
     def initialize(uri:)
       @uri = uri
     end
-
-    def name
-      @name ||= ::URI.parse(@uri).path.sub('/', '').gsub(/\W/, '-').downcase
-    end
   end
 end

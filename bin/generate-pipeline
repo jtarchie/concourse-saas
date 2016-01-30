@@ -3,11 +3,15 @@
 require 'yaml'
 require_relative '../app/models/atc_endpoint'
 require_relative '../app/pipelines/main'
+require_relative '../app/presenters/repo'
 require_relative '../app/repositories/repos'
 
 uri, username, password = *ARGV
 
-fail 'usage: ./bin/generate-pipeline <uri> <username> <password>' if [uri, username, password].any?(&:nil?)
+if [uri, username, password].any?(&:nil?)
+  warn 'usage: ./bin/generate-pipeline <uri> <username> <password>'
+  exit 1
+end
 
 source = Models::Repo.new(uri: 'https://github.com/jtarchie/concourse-saas')
 atc_endpoint = Models::ATCEndpoint.new(
@@ -17,8 +21,8 @@ atc_endpoint = Models::ATCEndpoint.new(
 )
 
 manifest = Pipeline::Main.new(
-  repos: Repositories::Repos.all,
-  source: source,
+  repos: Repositories::Repos.all.collect {|r| Presenters::Repo.new(r) },
+  source: Presenters::Repo.new(source),
   atc_endpoint: atc_endpoint
 )
 
