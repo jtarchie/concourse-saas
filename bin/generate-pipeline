@@ -5,6 +5,7 @@ require_relative '../app/models/atc_endpoint'
 require_relative '../app/pipelines/main'
 require_relative '../app/presenters/repo'
 require_relative '../app/repositories/repos'
+require_relative '../app/validators/has_pipeline'
 
 uri, username, password = *ARGV
 
@@ -20,8 +21,14 @@ atc_endpoint = Models::ATCEndpoint.new(
   password: password
 )
 
+repos = Repositories::Repos.all
+repos.each do |repo|
+  validator = Validators::HasPipeline.new(repo: repo)
+  fail "Repo (#{repo.uri}) is not valid" unless validator.valid?
+end
+
 manifest = Pipeline::Main.new(
-  repos: Repositories::Repos.all.collect { |r| Presenters::Repo.new(r) },
+  repos: repos.collect { |r| Presenters::Repo.new(r) },
   source: Presenters::Repo.new(source),
   atc_endpoint: atc_endpoint
 )
