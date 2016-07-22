@@ -2,12 +2,13 @@ require 'erb'
 
 module Responders
   class HTML < BasicObject
-    attr_reader :template_path, :serializer, :renderer
+    attr_reader :template_path, :serializer, :renderer, :view
 
-    def initialize(serializer:, template_path: './app/views/', renderer: ::ERB)
+    def initialize(serializer:, template_path: './app/views/', renderer: ::ERB, view:)
       @renderer      = renderer
       @serializer    = serializer
       @template_path = template_path
+      @view          = view
     end
 
     def call(*)
@@ -18,14 +19,18 @@ module Responders
       ]
     end
 
+    # FIXME: A bug in Rack::Lint requires this on an object
+    def inspect; end
+
     private
 
     def rendered_template
-      renderer.new(
+      @template ||= renderer.new(
         ::File.read(
-          ::File.join(template_path, 'html', 'index.erb')
+          ::File.join(template_path, 'html', "#{view}.erb")
         )
-      ).result(serializer.binding)
+      )
+      @template.result(serializer.binding)
     end
   end
 end

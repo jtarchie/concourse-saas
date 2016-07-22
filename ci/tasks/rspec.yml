@@ -1,6 +1,6 @@
 ---
 platform: linux
-image: docker:///ruby#2.3.0
+image: docker:///ruby
 inputs:
   - name: concourse-saas
 
